@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DM Cheat Sheet – Frozen Sick</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ── DESIGN SYSTEM ───────────────────────────────────
+   Color meanings:
+     AMBER  (#e8a820) = best in party (tables only)
+     GREEN  (#4db87a) = beneficial trait (resistance, immunity, adv)
+     RED/GREEN gradient = heat map on scored tables
+     No color on negatives — neutral treatment
+─────────────────────────────────────────────────────*/
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:       #141414;
+  --surface:  #1e1e1e;
+  --surface2: #272727;
+  --border:   #383838;
+  --border2:  #2e2e2e;
+
+  --text:     #f0f0f0;
+  --muted:    #a8a8a8;
+  --subtle:   #707070;
+  --faint:    #505050;
+
+  --amber:    #e8a820;
+  --green:    #52b566;
+  --danger:   #d04848;
+}
+
+body{
+  background:var(--bg);
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  color:var(--text);
+  padding:1.5rem;
+  line-height:1.4;
+}
+
+/* ── PAGE HEADER ── */
+.hdr{text-align:center;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.hdr .eyebrow{font-size:.7rem;letter-spacing:.35em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+.hdr h1{font-family:'Cinzel',serif;font-size:1.75rem;color:var(--text);letter-spacing:.05em}
+.hdr .meta{font-size:.75rem;color:var(--muted);margin-top:.25rem;letter-spacing:.1em;text-transform:uppercase}
+
+/* ── TOGGLE ── */
+.toggle{display:flex;justify-content:center;gap:.4rem;margin-bottom:1.25rem}
+.tbtn{font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;padding:.38rem 1.1rem;border-radius:4px;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--muted);transition:all .15s}
+.tbtn.on{background:var(--surface2);border-color:var(--border);color:var(--text)}
+
+/* ══════════════════════════════════
+   CARD VIEW
+══════════════════════════════════ */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.card.ranger   {border-left:4px solid #4d9e6a}
+.card.sorcerer {border-left:4px solid #8855cc}
+.card.barbarian{border-left:4px solid #b83a3a}
+.card.paladin  {border-left:4px solid #3a70a0}
+.card.bard     {border-left:4px solid #9a7a20}
+.card.fighter  {border-left:4px solid #28a090}
+
+.card-name{padding:.75rem 1rem .65rem;display:flex;align-items:flex-start;justify-content:space-between;border-bottom:1px solid var(--border2)}
+.card-name .name{font-family:'Cinzel',serif;font-size:1.05rem;font-weight:600;color:var(--text)}
+.card.ranger   .card-name .name{color:#72c28e}
+.card.sorcerer .card-name .name{color:#aa7de8}
+.card.barbarian .card-name .name{color:#d46868}
+.card.paladin  .card-name .name{color:#5a96c8}
+.card.bard     .card-name .name{color:#c8a030}
+.card.fighter  .card-name .name{color:#5ac8b8}
+.card-name .id{font-size:.7rem;color:var(--muted);margin-top:.2rem}
+.badge{font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:3px;white-space:nowrap;margin-top:.1rem;background:var(--surface2);color:var(--muted);border:1px solid var(--border)}
+
+/* BIG FOUR */
+.big4{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border2)}
+.b4{padding:.65rem .5rem;text-align:center;border-right:1px solid var(--border2)}
+.b4:last-child{border-right:none}
+.b4 .lbl{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem}
+.b4 .val{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:600;line-height:1;color:var(--text);font-variant-numeric:tabular-nums}
+.b4 .val.spd{font-size:1.1rem;color:var(--muted)}
+
+/* SAVES */
+.saves-row{padding:.6rem 1rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.saves-label{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:.25rem;white-space:nowrap}
+.sv{font-size:.8rem;font-weight:500;padding:3px 7px;border-radius:3px;background:var(--surface2);white-space:nowrap;color:var(--text)}
+.sv .attr{font-size:.6rem;color:var(--muted);margin-right:2px}
+.sv.prof{font-weight:700;outline:1px solid var(--border)}
+
+/* ABILITIES + SPELLS */
+.mid-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border2)}
+.mcol{padding:.65rem 1rem}
+.mcol+.mcol{border-left:1px solid var(--border2)}
+.col-lbl{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.abs6{display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem}
+.ab{text-align:center;background:var(--surface2);border-radius:4px;padding:.3rem .2rem}
+.ab .an{font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ab .am{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;line-height:1.2;color:var(--text);font-variant-numeric:tabular-nums}
+.ab .as{font-size:.6rem;color:var(--muted)}
+.spell-stats{display:flex;flex-direction:column;gap:.45rem;padding-top:.1rem}
+.spell-stat{display:flex;justify-content:space-between;align-items:center}
+.spell-stat .sl{font-size:.75rem;color:var(--muted)}
+.spell-stat .sv2{font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.no-spell{font-size:.75rem;color:var(--faint);padding-top:.25rem}
+
+/* PASSIVES */
+.passives{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border2)}
+.pv{padding:.5rem .5rem;text-align:center;border-right:1px solid var(--border2)}
+.pv:last-child{border-right:none}
+.pv .pl{font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.15rem}
+.pv .pn{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--text);font-variant-numeric:tabular-nums}
+
+/* TAGS */
+.ctags{padding:.55rem 1rem;display:flex;flex-wrap:wrap;gap:.3rem;background:rgba(0,0,0,.2)}
+.t{font-size:.65rem;font-weight:500;padding:3px 8px;border-radius:3px;background:var(--surface2);color:var(--muted);border:1px solid var(--border2);white-space:nowrap}
+.t.good{color:var(--green);border-color:rgba(77,184,122,.35);background:rgba(77,184,122,.08)}
+.t.warn{color:#e07050;border-color:rgba(224,112,80,.3);background:rgba(224,112,80,.08)}
+.t.lang{color:var(--text);border-color:var(--border);background:var(--surface2)}
+.t.spc {color:var(--text);border-color:var(--border);background:var(--surface2)}
+
+/* ══════════════════════════════════
+   TABLE VIEW
+══════════════════════════════════ */
+.tv{display:flex;flex-direction:column;gap:1.5rem}
+.sec-ttl{font-size:.65rem;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.tw{overflow-x:auto;border-radius:4px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--surface2)}
+th{padding:.65rem .75rem;font-size:.6rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:center}
+th.lh{text-align:left;padding-left:1rem}
+th.ch{cursor:pointer;font-size:.82rem;text-transform:none;letter-spacing:0;color:var(--muted);transition:color .15s;min-width:90px;font-weight:400}
+th.ch.hl{color:var(--text);font-weight:600}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+td{padding:.5rem .75rem;border-bottom:1px solid var(--border2);text-align:center;font-size:.9rem;transition:opacity .12s}
+td.lh{text-align:left;padding-left:1rem;color:var(--muted);font-size:.82rem;white-space:nowrap}
+td.cat{background:rgba(0,0,0,.25);color:var(--muted);font-size:.58rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;text-align:left;padding-left:1rem;padding-top:.45rem;padding-bottom:.45rem}
+td.dim{opacity:.15}
+.n{font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.n.best{color:var(--amber)}
+.n.na{color:var(--faint);font-size:.78rem;font-weight:400}
+.pnote{font-size:.55rem;color:var(--muted);margin-top:1px;font-weight:500}
+
+/* DEFENSES TABLE — larger, readable */
+.def-table td.lh{font-size:.9rem;color:var(--text)}
+.def-tag-cell{padding:.45rem .6rem}
+.def-tag-cell .t{font-size:.75rem;padding:4px 10px;margin:2px}
+
+.tc{display:flex;flex-wrap:wrap;gap:.25rem;justify-content:center;padding:.25rem .3rem}
+.tc .t{font-size:.68rem;padding:3px 8px}
+
+/* FOCUS CHIPS */
+.focus-bar{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem}
+.focus-chip{font-family:'Inter',sans-serif;font-size:.7rem;font-weight:600;padding:4px 10px;border-radius:4px;cursor:pointer;background:transparent;border:1px solid;transition:opacity .15s;white-space:nowrap}
+.focus-chip.all-chip{border-color:var(--border);color:var(--muted)}
+.focus-chip.all-chip.active{border-color:var(--text);color:var(--text)}
+.focus-chip.faded{opacity:.3}
+
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="eyebrow">Campaign · Frozen Sick</div>
+  <h1>DM Cheat Sheet</h1>
+  <div class="meta">Party of Six · Level 1 · Prof Bonus +2</div>
+</div>
+
+<div class="toggle">
+  <button class="tbtn on" id="bc" onclick="sv('cards')">Cards</button>
+  <button class="tbtn"    id="bt" onclick="sv('tables')">Tables</button>
+</div>
+
+<!-- ════════════════════ CARD VIEW ════════════════════ -->
+<div id="vc">
+<div class="grid">
+
+<!-- BEREN -->
+<div class="card ranger">
+  <div class="card-name">
+    <div><div class="name">Beren Wolfbane</div><div class="id">Half-Elf · Ranger 1</div></div>
+    <div class="badge">🏹 Ranger</div>
+  </div>
+  <div class="big4">
+    <div class="b4"><div class="lbl">HP</div><div class="val">9</div></div>
+    <div class="b4"><div class="lbl">AC</div><div class="val">15</div></div>
+    <div class="b4"><div class="lbl">Init</div><div class="val">+3</div></div>
+    <div class="b4"><div class="lbl">Speed</div><div class="val spd">30 ft</div></div>
+  </div>
+  <div class="saves-row">
+    <span class="saves-label">Saves</span>
+    <span class="sv"><span class="attr">STR</span>+3</span>
+    <span class="sv prof"><span class="attr">DEX</span>+5</span>
+    <span class="sv"><span class="attr">CON</span>−1</span>
+    <span class="sv"><span class="attr">INT</span>+1</span>
+    <span class="sv"><span class="attr">WIS</span>+2</span>
+    <span class="sv"><span class="attr">CHA</span>+1</span>
+  </div>
+  <div class="mid-row">
+    <div class="mcol">
+      <div class="col-lbl">Ability Scores</div>
+      <div class="abs6">
+        <div class="ab"><div class="an">STR</div><div class="am">+1</div><div class="as">13</div></div>
+        <div class="ab"><div class="an">DEX</div><div class="am">+3</div><div class="as">16</div></div>
+        <div class="ab"><div class="an">CON</div><div class="am">−1</div><div class="as">9</div></div>
+        <div class="ab"><div class="an">INT</div><div class="am">+1</div><div class="as">12</div></div>
+        <div class="ab"><div class="an">WIS</div><div class="am">+2</div><div class="as">14</div></div>
+        <div class="ab"><div class="an">CHA</div><div class="am">+1</div><div class="as">13</div></div>
+      </div>
+    </div>
+    <div class="mcol">
+      <div class="col-lbl">Spellcasting</div>
+      <div class="spell-stats">
+        <div class="spell-stat"><span class="sl">Modifier</span><span class="sv2">+2</span></div>
+        <div class="spell-stat"><span class="sl">Spell Attack</span><span class="sv2">+4</span></div>
+        <div class="spell-stat"><span class="sl">Save DC</span><span class="sv2">12</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="passives">
+    <div class="pv"><div class="pl">Passive Perc</div><div class="pn">12</div></div>
+    <div class="pv"><div class="pl">Passive Inv</div><div class="pn">13</div></div>
+    <div class="pv"><div class="pl">Passive Ins</div><div class="pn">12</div></div>
+  </div>
+  <div class="ctags">
+    <span class="t good">Darkvision 60 ft</span>
+    <span class="t good">Adv vs Charmed</span>
+    <span class="t good">Immune: Magical Sleep</span>
+    <span class="t lang">Common · Elvish · Sylvan</span>
+  </div>
+</div>
+
+<!-- DORIAN -->
+<div class="card sorcerer">
+  <div class="card-name">
+    <div><div class="name">Dorian</div><div class="id">Tiefling Male · Sorcerer 1</div></div>
+    <div class="badge">✨ Sorcerer</div>
+  </div>
+  <div class="big4">
+    <div class="b4"><div class="lbl">HP</div><div class="val">8</div></div>
+    <div class="b4"><div class="lbl">AC</div><div class="val">13</div></div>
+    <div class="b4"><div class="lbl">Init</div><div class="val">+5</div></div>
+    <div class="b4"><div class="lbl">Speed</div><div class="val spd">30 ft</div></div>
+  </div>
+  <div class="saves-row">
+    <span class="saves-label">Saves</span>
+    <span class="sv"><span class="attr">STR</span>−2</span>
+    <span class="sv"><span class="attr">DEX</span>+3</span>
+    <span class="sv prof"><span class="attr">CON</span>+4</span>
+    <span class="sv"><span class="attr">INT</span>−1</span>
+    <span class="sv"><span class="attr">WIS</span>+0</span>
+    <span class="sv prof"><span class="attr">CHA</span>+5</span>
+  </div>
+  <div class="mid-row">
+    <div class="mcol">
+      <div class="col-lbl">Ability Scores</div>
+      <div class="abs6">
+        <div class="ab"><div class="an">STR</div><div class="am">−2</div><div class="as">6</div></div>
+        <div class="ab"><div class="an">DEX</div><div class="am">+3</div><div class="as">16</div></div>
+        <div class="ab"><div class="an">CON</div><div class="am">+2</div><div class="as">14</div></div>
+        <div class="ab"><div class="an">INT</div><div class="am">−1</div><div class="as">9</div></div>
+        <div class="ab"><div class="an">WIS</div><div class="am">+0</div><div class="as">11</div></div>
+        <div class="ab"><div class="an">CHA</div><div class="am">+3</div><div class="as">16</div></div>
+      </div>
+    </div>
+    <div class="mcol">
+      <div class="col-lbl">Spellcasting</div>
+      <div class="spell-stats">
+        <div class="spell-stat"><span class="sl">Modifier</span><span class="sv2">+3</span></div>
+        <div class="spell-stat"><span class="sl">Spell Attack</span><span class="sv2">+5</span></div>
+        <div class="spell-stat"><span class="sl">Save DC</span><span class="sv2">13</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="passives">
+    <div class="pv"><div class="pl">Passive Perc</div><div class="pn">10</div></div>
+    <div class="pv"><div class="pl">Passive Inv</div><div class="pn">9</div></div>
+    <div class="pv"><div class="pl">Passive Ins</div><div class="pn">10</div></div>
+  </div>
+  <div class="ctags">
+    <span class="t good">Darkvision 60 ft</span>
+    <span class="t good">Resist: Necrotic</span>
+    <span class="t lang">Common · Elvish · Goblin</span>
+  </div>
+</div>
+
+<!-- NAPPA -->
+<div class="card barbarian">
+  <div class="card-name">
+    <div><div class="name">Nappa BamBam</div><div class="id">Half-Orc · Barbarian 1</div></div>
+    <div class="badge">🪓 Barbarian</div>
+  </div>
+  <div class="big4">
+    <div class="b4"><div class="lbl">HP</div><div class="val">14</div></div>
+    <div class="b4"><div class="lbl">AC</div><div class="val">12</div></div>
+    <div class="b4"><div class="lbl">Init</div><div class="val">+0</div></div>
+    <div class="b4"><div class="lbl">Speed</div><div class="val spd">30 ft</div></div>
+  </div>
+  <div class="saves-row">
+    <span class="saves-label">Saves</span>
+    <span class="sv prof"><span class="attr">STR</span>+7</span>
+    <span class="sv"><span class="attr">DEX</span>+0</span>
+    <span class="sv prof"><span class="attr">CON</span>+4</span>
+    <span class="sv"><span class="attr">INT</span>−2</span>
+    <span class="sv"><span class="attr">WIS</span>+0</span>
+    <span class="sv"><span class="attr">CHA</span>+0</span>
+  </div>
+  <div class="mid-row">
+    <div class="mcol">
+      <div class="col-lbl">Ability Scores</div>
+      <div class="abs6">
+        <div class="ab"><div class="an">STR</div><div class="am">+5</div><div class="as">20</div></div>
+        <div class="ab"><div class="an">DEX</div><div class="am">+0</div><div class="as">11</div></div>
+        <div class="ab"><div class="an">CON</div><div class="am">+2</div><div class="as">14</div></div>
+        <div class="ab"><div class="an">INT</div><div class="am">−2</div><div class="as">7</div></div>
+        <div class="ab"><div class="an">WIS</div><div class="am">+0</div><div class="as">10</div></div>
+        <div class="ab"><div class="an">CHA</div><div class="am">+0</div><div class="as">10</div></div>
+      </div>
+    </div>
+    <div class="mcol">
+      <div class="col-lbl">Spellcasting</div>
+      <div class="no-spell">No spellcasting</div>
+    </div>
+  </div>
+  <div class="passives">
+    <div class="pv"><div class="pl">Passive Perc</div><div class="pn">12</div></div>
+    <div class="pv"><div class="pl">Passive Inv</div><div class="pn">8</div></div>
+    <div class="pv"><div class="pl">Passive Ins</div><div class="pn">10</div></div>
+  </div>
+  <div class="ctags">
+    <span class="t good">Darkvision 60 ft</span>
+    <span class="t spc">Rage 2/rest</span>
+    <span class="t spc">Reckless Attack</span>
+    <span class="t lang">Common · Orc</span>
+  </div>
+</div>
+
+<!-- GARETH -->
+<div class="card paladin">
+  <div class="card-name">
+    <div><div class="name">Gareth Reinhard</div><div class="id">Human Male · Paladin 1</div></div>
+    <div class="badge">⚔️ Paladin</div>
+  </div>
+  <div class="big4">
+    <div class="b4"><div class="lbl">HP</div><div class="val">11</div></div>
+    <div class="b4"><div class="lbl">AC</div><div class="val">18</div></div>
+    <div class="b4"><div class="lbl">Init</div><div class="val">+3</div></div>
+    <div class="b4"><div class="lbl">Speed</div><div class="val spd">30 ft</div></div>
+  </div>
+  <div class="saves-row">
+    <span class="saves-label">Saves</span>
+    <span class="sv"><span class="attr">STR</span>+2</span>
+    <span class="sv"><span class="attr">DEX</span>+1</span>
+    <span class="sv"><span class="attr">CON</span>+1</span>
+    <span class="sv"><span class="attr">INT</span>+0</span>
+    <span class="sv prof"><span class="attr">WIS</span>+3</span>
+    <span class="sv prof"><span class="attr">CHA</span>+4</span>
+  </div>
+  <div class="mid-row">
+    <div class="mcol">
+      <div class="col-lbl">Ability Scores</div>
+      <div class="abs6">
+        <div class="ab"><div class="an">STR</div><div class="am">+2</div><div class="as">14</div></div>
+        <div class="ab"><div class="an">DEX</div><div class="am">+1</div><div class="as">12</div></div>
+        <div class="ab"><div class="an">CON</div><div class="am">+1</div><div class="as">13</div></div>
+        <div class="ab"><div class="an">INT</div><div class="am">+0</div><div class="as">10</div></div>
+        <div class="ab"><div class="an">WIS</div><div class="am">+1</div><div class="as">13</div></div>
+        <div class="ab"><div class="an">CHA</div><div class="am">+2</div><div class="as">15</div></div>
+      </div>
+    </div>
+    <div class="mcol">
+      <div class="col-lbl">Spellcasting</div>
+      <div class="spell-stats">
+        <div class="spell-stat"><span class="sl">Modifier</span><span class="sv2">+2</span></div>
+        <div class="spell-stat"><span class="sl">Spell Attack</span><span class="sv2">+4</span></div>
+        <div class="spell-stat"><span class="sl">Save DC</span><span class="sv2">12</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="passives">
+    <div class="pv"><div class="pl">Passive Perc</div><div class="pn">11</div></div>
+    <div class="pv"><div class="pl">Passive Inv</div><div class="pn">10</div></div>
+    <div class="pv"><div class="pl">Passive Ins</div><div class="pn">13</div></div>
+  </div>
+  <div class="ctags">
+    <span class="t spc">Divine Sense</span>
+    <span class="t spc">Lay on Hands 5 HP</span>
+    <span class="t warn">Stealth: Disadv</span>
+    <span class="t lang">Common · Dwarvish · Giant</span>
+  </div>
+</div>
+
+<!-- ÓG -->
+<div class="card bard">
+  <div class="card-name">
+    <div><div class="name">Óg Junior II</div><div class="id">Orc Male · Bard 1</div></div>
+    <div class="badge">🎵 Bard</div>
+  </div>
+  <div class="big4">
+    <div class="b4"><div class="lbl">HP</div><div class="val">8</div></div>
+    <div class="b4"><div class="lbl">AC</div><div class="val">11</div></div>
+    <div class="b4"><div class="lbl">Init</div><div class="val">+0</div></div>
+    <div class="b4"><div class="lbl">Speed</div><div class="val spd">30 ft</div></div>
+  </div>
+  <div class="saves-row">
+    <span class="saves-label">Saves</span>
+    <span class="sv"><span class="attr">STR</span>−1</span>
+    <span class="sv prof"><span class="attr">DEX</span>+2</span>
+    <span class="sv"><span class="attr">CON</span>+0</span>
+    <span class="sv"><span class="attr">INT</span>+2</span>
+    <span class="sv"><span class="attr">WIS</span>+1</span>
+    <span class="sv prof"><span class="attr">CHA</span>+4</span>
+  </div>
+  <div class="mid-row">
+    <div class="mcol">
+      <div class="col-lbl">Ability Scores</div>
+      <div class="abs6">
+        <div class="ab"><div class="an">STR</div><div class="am">−1</div><div class="as">9</div></div>
+        <div class="ab"><div class="an">DEX</div><div class="am">+0</div><div class="as">10</div></div>
+        <div class="ab"><div class="an">CON</div><div class="am">+0</div><div class="as">11</div></div>
+        <div class="ab"><div class="an">INT</div><div class="am">+2</div><div class="as">14</div></div>
+        <div class="ab"><div class="an">WIS</div><div class="am">+1</div><div class="as">12</div></div>
+        <div class="ab"><div class="an">CHA</div><div class="am">+2</div><div class="as">15</div></div>
+      </div>
+    </div>
+    <div class="mcol">
+      <div class="col-lbl">Spellcasting</div>
+      <div class="spell-stats">
+        <div class="spell-stat"><span class="sl">Modifier</span><span class="sv2">+2</span></div>
+        <div class="spell-stat"><span class="sl">Spell Attack</span><span class="sv2">+4</span></div>
+        <div class="spell-stat"><span class="sl">Save DC</span><span class="sv2">12</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="passives">
+    <div class="pv"><div class="pl">Passive Perc</div><div class="pn">11</div></div>
+    <div class="pv"><div class="pl">Passive Inv</div><div class="pn">14</div></div>
+    <div class="pv"><div class="pl">Passive Ins</div><div class="pn">13</div></div>
+  </div>
+  <div class="ctags">
+    <span class="t good">Darkvision 120 ft</span>
+    <span class="t spc">Bardic Inspiration d6</span>
+    <span class="t lang">Common · Draconic · Orc</span>
+  </div>
+</div>
+
+<!-- ANDRICK -->
+<div class="card fighter">
+  <div class="card-name">
+    <div><div class="name">Andrick</div><div class="id">Dragonborn Male · Fighter 1</div></div>
+    <div class="badge">🐉 Fighter</div>
+  </div>
+  <div class="big4">
+    <div class="b4"><div class="lbl">HP</div><div class="val">12</div></div>
+    <div class="b4"><div class="lbl">AC</div><div class="val">18</div></div>
+    <div class="b4"><div class="lbl">Init</div><div class="val">+2</div></div>
+    <div class="b4"><div class="lbl">Speed</div><div class="val spd">30 ft</div></div>
+  </div>
+  <div class="saves-row">
+    <span class="saves-label">Saves</span>
+    <span class="sv prof"><span class="attr">STR</span>+4</span>
+    <span class="sv"><span class="attr">DEX</span>+2</span>
+    <span class="sv prof"><span class="attr">CON</span>+4</span>
+    <span class="sv"><span class="attr">INT</span>+3</span>
+    <span class="sv"><span class="attr">WIS</span>+1</span>
+    <span class="sv"><span class="attr">CHA</span>+2</span>
+  </div>
+  <div class="mid-row">
+    <div class="mcol">
+      <div class="col-lbl">Ability Scores</div>
+      <div class="abs6">
+        <div class="ab"><div class="an">STR</div><div class="am">+2</div><div class="as">15</div></div>
+        <div class="ab"><div class="an">DEX</div><div class="am">+2</div><div class="as">14</div></div>
+        <div class="ab"><div class="an">CON</div><div class="am">+2</div><div class="as">15</div></div>
+        <div class="ab"><div class="an">INT</div><div class="am">+3</div><div class="as">17</div></div>
+        <div class="ab"><div class="an">WIS</div><div class="am">+1</div><div class="as">12</div></div>
+        <div class="ab"><div class="an">CHA</div><div class="am">+2</div><div class="as">14</div></div>
+      </div>
+    </div>
+    <div class="mcol">
+      <div class="col-lbl">Spellcasting</div>
+      <div class="spell-stats">
+        <div class="spell-stat"><span class="sl">Modifier</span><span class="sv2">+3</span></div>
+        <div class="spell-stat"><span class="sl">Spell Attack</span><span class="sv2">+5</span></div>
+        <div class="spell-stat"><span class="sl">Save DC</span><span class="sv2">13</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="passives">
+    <div class="pv"><div class="pl">Passive Perc</div><div class="pn">11</div></div>
+    <div class="pv"><div class="pl">Passive Inv</div><div class="pn">13</div></div>
+    <div class="pv"><div class="pl">Passive Ins</div><div class="pn">13</div></div>
+  </div>
+  <div class="ctags">
+    <span class="t good">Darkvision 60 ft</span>
+    <span class="t good">Resist: Lightning</span>
+    <span class="t spc">Second Wind 1d10+1/SR</span>
+    <span class="t spc">Breath Weapon 2d6 (DC 12)</span>
+    <span class="t warn">Stealth: Disadv</span>
+    <span class="t lang">Common · Draconic</span>
+  </div>
+</div>
+
+</div><!-- /grid -->
+</div><!-- /vc -->
+
+<!-- ════════════════════ TABLE VIEW ════════════════════ -->
+<div id="vt" class="hidden tv"></div>
+
+<script>
+const M=[
+  {name:"Beren", emoji:"🏹", color:"#4d9e6a", colorLt:"#72c28e",
+   hp:9,ac:15,init:3,
+   abs:{str:[1,13],dex:[3,16],con:[-1,9],int:[1,12],wis:[2,14],cha:[1,13]},
+   saves:{str:3,dex:5,con:-1,int:1,wis:2,cha:1},profSaves:["dex"],
+   spell:{mod:2,atk:4,dc:12},
+   pp:12,pi:13,pins:12,
+   resistances:["Adv vs Charmed","Immune: Magical Sleep"],
+   senses:["Darkvision 60 ft"],
+   special:[],
+   cautions:[],
+   languages:["Common","Elvish","Sylvan"],
+   skills:[3,4,1,3,3,1,2,1,3,2,3,2,1,1,1,3,5,4]},
+  {name:"Dorian",emoji:"✨", color:"#8855cc", colorLt:"#aa7de8",
+   hp:8,ac:13,init:5,
+   abs:{str:[-2,6],dex:[3,16],con:[2,14],int:[-1,9],wis:[0,11],cha:[3,16]},
+   saves:{str:-2,dex:3,con:4,int:-1,wis:0,cha:5},profSaves:["con","cha"],
+   spell:{mod:3,atk:5,dc:13},
+   pp:10,pi:9,pins:10,
+   resistances:["Resist: Necrotic"],
+   senses:["Darkvision 60 ft"],
+   special:[],
+   cautions:[],
+   languages:["Common","Elvish","Goblin"],
+   skills:[3,0,-1,-2,5,-1,0,5,-1,0,-1,0,3,3,-1,5,5,0]},
+  {name:"Nappa", emoji:"🪓", color:"#b83a3a", colorLt:"#d46868",
+   hp:14,ac:12,init:0,
+   abs:{str:[5,20],dex:[0,11],con:[2,14],int:[-2,7],wis:[0,10],cha:[0,10]},
+   saves:{str:7,dex:0,con:4,int:-2,wis:0,cha:0},profSaves:["str","con"],
+   spell:null,
+   pp:12,pi:8,pins:10,
+   resistances:[],
+   senses:["Darkvision 60 ft"],
+   special:["Rage 2/rest","Reckless Attack"],
+   cautions:[],
+   languages:["Common","Orc"],
+   skills:[2,0,-2,7,0,-2,0,2,-2,0,-2,2,0,0,-2,0,0,2]},
+  {name:"Gareth",emoji:"⚔️", color:"#3a70a0", colorLt:"#5a96c8",
+   hp:11,ac:18,init:3,
+   abs:{str:[2,14],dex:[1,12],con:[1,13],int:[0,10],wis:[1,13],cha:[2,15]},
+   saves:{str:2,dex:1,con:1,int:0,wis:3,cha:4},profSaves:["wis","cha"],
+   spell:{mod:2,atk:4,dc:12},
+   pp:11,pi:10,pins:13,
+   resistances:[],
+   senses:[],
+   special:["Divine Sense","Lay on Hands 5hp"],
+   cautions:["Stealth: Disadv"],
+   languages:["Common","Dwarvish","Giant"],
+   skills:[1,1,2,2,2,0,3,2,0,3,2,1,2,2,2,1,1,1]},
+  {name:"Óg",   emoji:"🎵", color:"#9a7a20", colorLt:"#c8a030",
+   hp:8,ac:11,init:0,
+   abs:{str:[-1,9],dex:[0,10],con:[0,11],int:[2,14],wis:[1,12],cha:[2,15]},
+   saves:{str:-1,dex:2,con:0,int:2,wis:1,cha:4},profSaves:["dex","cha"],
+   spell:{mod:2,atk:4,dc:12},
+   pp:11,pi:14,pins:13,
+   resistances:[],
+   senses:["Darkvision 120 ft"],
+   special:["Bardic Inspiration d6"],
+   cautions:[],
+   languages:["Common","Draconic","Orc"],
+   skills:[0,1,2,-1,4,2,3,2,4,1,2,1,2,4,2,0,2,1]},
+  {name:"Andrick",emoji:"🐉", color:"#28a090", colorLt:"#5ac8b8",
+   hp:12,ac:18,init:2,
+   abs:{str:[2,15],dex:[2,14],con:[2,15],int:[3,17],wis:[1,12],cha:[2,14]},
+   saves:{str:4,dex:2,con:4,int:3,wis:1,cha:2},profSaves:["str","con"],
+   spell:{mod:3,atk:5,dc:13},
+   pp:11,pi:13,pins:13,
+   resistances:["Resist: Lightning"],
+   senses:["Darkvision 60 ft"],
+   special:["Second Wind 1d10+1/SR","Breath Weapon 2d6 (DC 12)"],
+   cautions:["Stealth: Disadv"],
+   languages:["Common","Common Sign Language","Draconic"],
+   skills:[2,1,5,2,2,5,3,2,3,1,3,1,2,4,3,2,2,1]},
+];
+
+const SKILLS=[
+  {n:"Acrobatics",a:"DEX"},{n:"Animal Handling",a:"WIS"},{n:"Arcana",a:"INT"},
+  {n:"Athletics",a:"STR"},{n:"Deception",a:"CHA"},{n:"History",a:"INT"},
+  {n:"Insight",a:"WIS"},{n:"Intimidation",a:"CHA"},{n:"Investigation",a:"INT"},
+  {n:"Medicine",a:"WIS"},{n:"Nature",a:"INT"},{n:"Perception",a:"WIS"},
+  {n:"Performance",a:"CHA"},{n:"Persuasion",a:"CHA"},{n:"Religion",a:"INT"},
+  {n:"Sleight of Hand",a:"DEX"},{n:"Stealth",a:"DEX"},{n:"Survival",a:"WIS"},
+];
+
+let HL=null;
+
+const f=n=>(n>=0?"+":"")+n;
+const maxOf=a=>Math.max(...a.filter(v=>v!==null&&v!==undefined));
+
+// Heat-map background: -5→0 = faint red, 0→+7 = faint green
+// Uses gentle, low-saturation tints so text remains legible
+function heatBg(v){
+  if(v===null||v===undefined)return"";
+  if(v>=5)  return"rgba(60,160,90,.28)";
+  if(v>=4)  return"rgba(60,160,90,.22)";
+  if(v>=3)  return"rgba(60,160,90,.16)";
+  if(v>=2)  return"rgba(60,160,90,.10)";
+  if(v>=1)  return"rgba(60,160,90,.05)";
+  if(v===0) return"";
+  if(v>=-1) return"rgba(180,70,60,.07)";
+  if(v>=-2) return"rgba(180,70,60,.13)";
+  return    "rgba(180,70,60,.20)";
+}
+
+// ── DOM helpers ───────────────────────────────────────
+
+function makeThead(){
+  const tr=document.createElement("tr");
+  const lh=document.createElement("th");lh.className="lh";tr.appendChild(lh);
+  M.forEach((m,i)=>{
+    const th=document.createElement("th");
+    th.className="ch"+(HL===i?" hl":"");
+    th.style.borderTop=`3px solid ${m.color}`;
+    th.innerHTML=`${m.emoji} ${m.name}`;
+    th.onclick=()=>{HL=HL===i?null:i;build();};
+    tr.appendChild(th);
+  });
+  return tr;
+}
+
+function makeTheadWithAttr(){
+  const tr=document.createElement("tr");
+  const ah=document.createElement("th");ah.style.width="52px";ah.textContent="Attr";tr.appendChild(ah);
+  const nh=document.createElement("th");nh.className="lh";nh.textContent="Skill";tr.appendChild(nh);
+  M.forEach((m,i)=>{
+    const th=document.createElement("th");
+    th.className="ch"+(HL===i?" hl":"");
+    th.style.borderTop=`3px solid ${m.color}`;
+    th.innerHTML=`${m.emoji} ${m.name}`;
+    th.onclick=()=>{HL=HL===i?null:i;build();};
+    tr.appendChild(th);
+  });
+  return tr;
+}
+
+function catRow(lbl){
+  const tr=document.createElement("tr");
+  const td=document.createElement("td");td.className="cat";
+  td.colSpan=M.length+1;td.textContent=lbl;
+  tr.appendChild(td);return tr;
+}
+
+// Generic numeric row with optional heat map
+function numRow(lbl, vals, opts={}){
+  const tr=document.createElement("tr");
+  tr.onmouseenter=()=>tr.style.background="rgba(255,255,255,.025)";
+  tr.onmouseleave=()=>tr.style.background="";
+  const ltd=document.createElement("td");ltd.className="lh";ltd.textContent=lbl;tr.appendChild(ltd);
+  const best=maxOf(vals.filter(v=>v!==null));
+  vals.forEach((v,i)=>{
+    const td=document.createElement("td");
+    if(HL!==null&&HL!==i)td.classList.add("dim");
+    if(opts.heat&&v!==null) td.style.background=heatBg(v);
+    const sp=document.createElement("span");sp.className="n";
+    if(v===null){sp.classList.add("na");sp.textContent="—";}
+    else{
+      const display=opts.fmt?opts.fmt(v,i):f(v);
+      sp.textContent=display;
+      if(opts.showBest&&v===best) sp.classList.add("best");
+    }
+    td.appendChild(sp);
+    if(opts.note){const nn=opts.note(v,i);if(nn){const nd=document.createElement("div");nd.className="pnote";nd.textContent=nn;td.appendChild(nd);}}
+    tr.appendChild(td);
+  });
+  return tr;
+}
+
+// Tag row — for defenses table, bigger and more readable
+function tagRow(lbl, fn){
+  const tr=document.createElement("tr");
+  tr.onmouseenter=()=>tr.style.background="rgba(255,255,255,.025)";
+  tr.onmouseleave=()=>tr.style.background="";
+  const ltd=document.createElement("td");ltd.className="lh";ltd.textContent=lbl;tr.appendChild(ltd);
+  M.forEach((m,i)=>{
+    const td=document.createElement("td");
+    td.className="def-tag-cell";
+    if(HL!==null&&HL!==i)td.classList.add("dim");
+    const items=fn(m);
+    if(!items.length){
+      const sp=document.createElement("span");sp.className="n na";sp.textContent="—";td.appendChild(sp);
+    } else {
+      const d=document.createElement("div");d.className="tc";
+      items.forEach(({txt,cls})=>{
+        const s=document.createElement("span");s.className="t"+(cls?" "+cls:"");
+        s.textContent=txt;d.appendChild(s);
+      });
+      td.appendChild(d);
+    }
+    tr.appendChild(td);
+  });
+  return tr;
+}
+// little helper to make lh cells in def table bigger
+function td_style(td){td.style.fontSize=".88rem";td.style.color="var(--text)";}
+
+function makeSection(title, rows, tableClass=""){
+  const d=document.createElement("div");
+  const ttl=document.createElement("div");ttl.className="sec-ttl";ttl.textContent=title;d.appendChild(ttl);
+  const wrap=document.createElement("div");wrap.className="tw";
+  const tbl=document.createElement("table");
+  if(tableClass)tbl.classList.add(tableClass);
+  const thead=document.createElement("thead");thead.appendChild(makeThead());tbl.appendChild(thead);
+  const tbody=document.createElement("tbody");rows.forEach(r=>tbody.appendChild(r));
+  tbl.appendChild(tbody);wrap.appendChild(tbl);d.appendChild(wrap);
+  return d;
+}
+
+// ── MAIN BUILD ──────────────────────────────────────
+function build(){
+  const C=document.getElementById("vt");C.innerHTML="";
+
+  // focus bar
+  const fb=document.createElement("div");fb.className="focus-bar";
+  const allChip=document.createElement("button");
+  allChip.className="focus-chip all-chip"+(HL===null?" active":"");
+  allChip.textContent="All";
+  allChip.onclick=()=>{HL=null;build();};
+  fb.appendChild(allChip);
+  M.forEach((m,i)=>{
+    const chip=document.createElement("button");
+    chip.className="focus-chip"+(HL!==null&&HL!==i?" faded":"");
+    chip.style.borderColor=m.colorLt;
+    chip.style.color=m.colorLt;
+    chip.textContent=m.emoji+" "+m.name;
+    chip.onclick=()=>{HL=HL===i?null:i;build();};
+    fb.appendChild(chip);
+  });
+  C.appendChild(fb);
+
+  // 1. COMBAT AT A GLANCE
+  C.appendChild(makeSection("Combat at a Glance",[
+    numRow("HP",  M.map(m=>m.hp),  {fmt:v=>String(v), showBest:true}),
+    numRow("AC",  M.map(m=>m.ac),  {fmt:v=>String(v), showBest:true}),
+    numRow("Initiative", M.map(m=>m.init)),
+    catRow("Spellcasting"),
+    numRow("Spell Attack", M.map(m=>m.spell?.atk??null), {showBest:true}),
+    numRow("Save DC",      M.map(m=>m.spell?.dc??null),  {fmt:v=>v===null?null:String(v), showBest:true}),
+    catRow("Passive Senses"),
+    numRow("Perception",    M.map(m=>m.pp),   {fmt:v=>String(v), showBest:true}),
+    numRow("Investigation", M.map(m=>m.pi),   {fmt:v=>String(v), showBest:true}),
+    numRow("Insight",       M.map(m=>m.pins), {fmt:v=>String(v), showBest:true}),
+  ]));
+
+  // 2. SAVING THROWS (heat map)
+  C.appendChild(makeSection("Saving Throws",[
+    ...([["STR","str"],["DEX","dex"],["CON","con"],["INT","int"],["WIS","wis"],["CHA","cha"]].map(([lbl,k])=>
+      numRow(lbl, M.map(m=>m.saves[k]), {
+        heat: true,
+        showBest: true,
+        note:(v,i)=>M[i].profSaves.includes(k)?"proficient":null
+      })
+    ))
+  ]));
+
+  // 3. ABILITY SCORES (heat map)
+  C.appendChild(makeSection("Ability Scores",[
+    ...([["STR","str"],["DEX","dex"],["CON","con"],["INT","int"],["WIS","wis"],["CHA","cha"]].map(([lbl,k])=>
+      numRow(lbl, M.map(m=>m.abs[k][0]), {
+        heat: true,
+        showBest: true,
+        fmt:(v,i)=>f(v)+" ("+M[i].abs[k][1]+")"
+      })
+    ))
+  ]));
+
+  // 4. DEFENSES, SENSES & LANGUAGES
+  C.appendChild(makeSection("Defenses, Senses & Languages",[
+    tagRow("Resistances & Immunities", m=>m.resistances.map(r=>({txt:r,cls:"good"}))),
+    tagRow("Senses",    m=>m.senses.map(s=>({txt:s,cls:"good"}))),
+    tagRow("Special",   m=>m.special.map(s=>({txt:s,cls:"spc"}))),
+    tagRow("Cautions",  m=>m.cautions.map(s=>({txt:s,cls:"warn"}))),
+    tagRow("Languages", m=>m.languages.map(l=>({txt:l,cls:"lang"}))),
+  ],"def-table"));
+
+  // 5. SKILLS (heat map)
+  const s5=document.createElement("div");
+  const t5=document.createElement("div");t5.className="sec-ttl";t5.textContent="Skills";s5.appendChild(t5);
+  const w5=document.createElement("div");w5.className="tw";
+  const tbl5=document.createElement("table");
+  const th5=document.createElement("thead");th5.appendChild(makeTheadWithAttr());tbl5.appendChild(th5);
+  const bd5=document.createElement("tbody");
+  SKILLS.forEach((sk,si)=>{
+    const vals=M.map(m=>m.skills[si]);
+    const best=maxOf(vals);
+    const tr=document.createElement("tr");
+    tr.onmouseenter=()=>tr.style.background="";  // heat map is the row highlight
+    tr.onmouseleave=()=>tr.style.background="";
+    // attr tag
+    const at=document.createElement("td");at.style.textAlign="center";
+    const tag=document.createElement("span");
+    tag.style.cssText="font-size:.6rem;font-weight:600;padding:2px 5px;border-radius:3px;background:var(--surface2);color:var(--muted);border:1px solid var(--border2);";
+    tag.textContent=sk.a;at.appendChild(tag);tr.appendChild(at);
+    // skill name
+    const nt=document.createElement("td");nt.className="lh";nt.style.paddingLeft=".75rem";nt.textContent=sk.n;tr.appendChild(nt);
+    // values
+    vals.forEach((v,i)=>{
+      const td=document.createElement("td");
+      if(HL!==null&&HL!==i)td.classList.add("dim");
+      td.style.background=heatBg(v);
+      const sp=document.createElement("span");sp.className="n";
+      sp.textContent=f(v);
+      if(v===best) sp.classList.add("best");
+      td.appendChild(sp);tr.appendChild(td);
+    });
+    bd5.appendChild(tr);
+  });
+  tbl5.appendChild(bd5);w5.appendChild(tbl5);s5.appendChild(w5);
+  C.appendChild(s5);
+}
+
+function sv(v){
+  document.getElementById("vc").classList.toggle("hidden",v!=="cards");
+  document.getElementById("vt").classList.toggle("hidden",v!=="tables");
+  document.getElementById("bc").classList.toggle("on",v==="cards");
+  document.getElementById("bt").classList.toggle("on",v==="tables");
+  if(v==="tables")build();
+}
+</script>
+</body>
+</html>
