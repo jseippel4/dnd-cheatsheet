@@ -625,6 +625,7 @@ function makeThead(){
     const th=document.createElement("th");
     th.className="ch"+(HL===i?" hl":"");
     th.style.borderTop=`3px solid ${m.color}`;
+    th.style.color=m.colorLt;
     th.innerHTML=`${m.emoji} ${m.name}`;
     th.onclick=()=>{HL=HL===i?null:i;build();};
     tr.appendChild(th);
@@ -640,6 +641,7 @@ function makeTheadWithAttr(){
     const th=document.createElement("th");
     th.className="ch"+(HL===i?" hl":"");
     th.style.borderTop=`3px solid ${m.color}`;
+    th.style.color=m.colorLt;
     th.innerHTML=`${m.emoji} ${m.name}`;
     th.onclick=()=>{HL=HL===i?null:i;build();};
     tr.appendChild(th);
