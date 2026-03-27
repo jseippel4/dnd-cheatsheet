@@ -131,12 +131,12 @@ body{
 table{width:100%;border-collapse:collapse}
 thead tr{background:var(--surface2)}
 th{padding:.65rem .75rem;font-size:.6rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);text-align:center}
-th.lh{text-align:left;padding-left:1rem}
+th.lh{text-align:left;padding-left:1rem;position:sticky;left:0;background:var(--surface2);z-index:2}
 th.ch{cursor:pointer;font-size:.82rem;text-transform:none;letter-spacing:0;color:var(--muted);transition:color .15s;min-width:90px;font-weight:400}
 th.ch.hl{color:var(--text);font-weight:600}
 tbody tr:hover{background:rgba(255,255,255,.02)}
 td{padding:.5rem .75rem;border-bottom:1px solid var(--border2);text-align:center;font-size:.9rem;transition:opacity .12s}
-td.lh{text-align:left;padding-left:1rem;color:var(--muted);font-size:.82rem;white-space:nowrap}
+td.lh{text-align:left;padding-left:1rem;color:var(--muted);font-size:.82rem;white-space:nowrap;position:sticky;left:0;background:var(--surface);z-index:1}
 td.cat{background:rgba(0,0,0,.25);color:var(--muted);font-size:.58rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;text-align:left;padding-left:1rem;padding-top:.45rem;padding-bottom:.45rem}
 td.dim{opacity:.15}
 .n{font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
